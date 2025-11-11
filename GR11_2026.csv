@@ -1,0 +1,6 @@
+name,desc,category,weight,qty,wearable,consumable,luxury
+Tent,Bonfus Duos 2P,shelter,700,1,False,False,False
+Pack,Bonfus Framus 58L,pack,750,1,False,False,False
+Jacket,Arc'teryx Beta SL,clothes,340,1,False,False,False
+Shoes,Hoka Speedgoat 6 GTX size 46 2/3,wearables,564,1,True,False,False
+Hiking poles,Black Diamond Alpine Carbon Cork,wearables,486,1,True,False,False
