@@ -1,0 +1,66 @@
+name,desc,category,weight,qty,wearable,consumable,luxury
+Rain/wind jacket,Arc'teryx Beta SL,clothes,340.0,1.0,False,False,False
+Sandals,Xero Z-trail EV,clothes,322.0,1.0,False,False,False
+Puppy coat ?,Haglofs L.I.M. Down Hood,clothes,254.0,1.0,False,False,False
+Fleece jacket,Northface FutureFleece hoodie,clothes,210.0,1.0,False,False,False
+Legging,Icebreaker 200 Oasis merino,clothes,180.0,1.0,False,False,False
+Rain pants,Vaude -> replace!,clothes,172.0,1.0,False,False,False
+Shirt,Icebreaker Men Merino 125 Cool-Lite? Sphere III SS Tee,clothes,126.0,1.0,False,False,False
+Shorts,Patagonia multi trails,clothes,110.0,1.0,False,False,False
+Socks,Merino??,clothes,30.0,3.0,False,False,False
+Neck warmer,Buff merino,clothes,40.0,2.0,False,False,False
+Underwear,Icebreaker Anatomica Boxers,clothes,73.0,1.0,False,False,False
+Gloves?,Icebreaker merino,clothes,40.0,1.0,False,False,False
+Tent,Bonfus Duos 2P + 4x extra guy lines + wash line,Shelter and sleep,681.0,1.0,False,False,False
+Down quilt ,Therm-a-Rest Vesper 32 UL,Shelter and sleep,510.0,1.0,False,False,False
+Sleeping pad,Therm-a-Rest Neoair Xlite NXT - shortened after delamination,Shelter and sleep,325.0,1.0,False,False,False
+Tent pegs,Hilleberg ??,Shelter and sleep,11.0,10.0,False,False,False
+Pillow,Sea to Summit Aeros,Shelter and sleep,78.0,1.0,False,False,False
+Shoes,Hoka Speedgoat 6 GTX size 46 2/3,wearables,564.0,1.0,True,False,False
+Hiking poles,Black Diamond Alpine Carbon Cork,wearables,486.0,1.0,True,False,False
+Shirt,Icebreaker Men Merino 125 Cool-Lite? Sphere III SS Tee,wearables,126.0,1.0,True,False,False
+Shorts,Patagonia multi trails,wearables,110.0,1.0,True,False,False
+Underwear,Icebreaker Anatomica Boxers,wearables,73.0,1.0,True,False,False
+Belt,"Random, came with shorts",wearables,50.0,1.0,True,False,False
+Socks hiking,???,wearables,30.0,1.0,True,False,False
+Sunglasses,Oakley Radar EV Path,wearables,30.0,1.0,True,False,False
+Camera,Canon G7X mark III,electronics,315.0,1.0,False,False,True
+Power bank,Xtorm (?) 10'000 mAh,electronics,216.0,1.0,False,False,False
+Phone,IPhone 13 + protective case,electronics,205.0,1.0,False,False,False
+E-Reader,Kobo Klara + protective cover,electronics,190.0,1.0,False,False,True
+Satellite messenger,Garmin inReach Messenger,electronics,115.0,1.0,False,False,False
+Misc cables,Charging cables,electronics,100.0,1.0,False,False,False
+Sleeping pad pump,Flextail zero + fittings,electronics,61.0,1.0,False,False,True
+USB wall charger,XTorm 35W GaN2 Ultra,electronics,57.0,1.0,False,False,False
+Head light,Nitecore NU 25 UL,electronics,40.0,1.0,False,False,False
+Air tags,Apple air tags,electronics,12.0,1.0,False,False,False
+Camera stuff,"Extra battery, SD cards, ...",electronics,0.0,1.0,False,False,True
+Backpack,Bonfus Framus 58 L,pack,765.0,1.0,False,False,False
+Fanny pack,"DIY, UltraGrid 132 g/m2",pack,79.0,1.0,False,False,False
+Hip belt pockets,"DIY, Ultra 200x, 133 g/m2",pack,33.0,2.0,False,False,False
+Packing cubes,"DIY, Dyneema, 34 g/m2",pack,26.0,2.0,False,False,True
+Food bag,"DIY, Dyneema, 34 g/m2",pack,27.0,1.0,False,False,False
+Shoulder strap pockets,"DIY, Ultra 100x, 113 g/m2",pack,12.0,1.0,False,False,False
+Toiletry bag,"Toiletry bag, soap, sun screen, lip balm, ...",misc,250.0,1.0,False,False,False
+First aid,EHBO/medicine first aid,misc,200.0,1.0,False,False,False
+Washing kit,"Soaps, sponge, clothes line + peggs, ...",misc,200.0,1.0,False,False,False
+Towel,PackTowl hand (42x92 cm),misc,82.0,1.0,False,False,False
+Water filter,Katadyn befree 1 L,misc,64.0,1.0,False,False,False
+Mini tower,PackTowl face (25x35 cm),misc,20.0,1.0,False,False,False
+Map + compass,Paper map + compass,misc,0.0,1.0,False,False,False
+Water bottles,"Random, 1 L",misc,0.0,3.0,False,False,False
+Repair kit,"Thread/needles, patch kit sleeping pad, duck tape, ...",misc,0.0,1.0,False,False,False
+Pocket knife,CRKT CEO Flipper,misc,0.0,1.0,False,False,False
+Sleeping stuff,"Night mask, sleeping pills, ...",misc,0.0,1.0,False,False,False
+Cooking pot,Toaks titanium 900 ml + protective cover,cooking,128.0,1.0,False,False,False
+Burner,SOTO WindMaster,cooking,90.0,1.0,False,False,False
+Cutting board,GSI,cooking,70.0,1.0,False,False,False
+Mug,Toaks titanium 375 ml,cooking,51.0,1.0,False,False,False
+Small stuff,"Canister stand, lighter, dish towel, ...",cooking,50.0,1.0,False,False,False
+Cutlery,Sea to Summit? + Toaks titanium long spoon,cooking,44.0,1.0,False,False,False
+Food 2-3 days,Om nom nom..,consumables,2000.0,0.0,False,True,False
+Condiments,"Olive oil, salt, herbs, stock cubes, ...",consumables,300.0,0.0,False,True,False
+Fuel canister,"Random, 100 g",consumables,204.0,0.0,False,True,False
+Random food,"Small food stuff; coffee, jam, sugar, ..",consumables,100.0,0.0,False,True,False
+Water,Also known as H2O,consumables,2000.0,0.0,False,True,False
+Electrolytes,ORS / basic electrolyte tabs,consumables,50.0,0.0,False,True,False
