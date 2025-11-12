@@ -3,11 +3,25 @@ import streamlit as st
 import glob
 from datetime import datetime
 import plotly.express as px
+import plotly.graph_objects as go
+import matplotlib.pyplot as plt
 
 
 def create_empty_df():
     columns = ['name', 'desc', 'category', 'weight', 'qty', 'wearable', 'consumable', 'luxury']
     return pd.DataFrame(columns=columns)
+
+
+def sort_by_weight(df):
+    """
+    Sort dataframe: categories by total weight (descending), items within each category by item weight (descending)
+    """
+    df['item_weight'] = df['qty'] * df['weight']
+    category_totals = df.groupby('category')['item_weight'].sum().sort_values(ascending=False)
+    df['category'] = pd.Categorical(df['category'], categories=category_totals.index, ordered=True)
+    df = df.sort_values(['category', 'item_weight'], ascending=[True, False])
+    df = df.drop(columns=['item_weight'])
+    return df
 
 
 def handle_config_selection():
@@ -67,19 +81,25 @@ def display_summary(combined_df, category_weights):
         st.metric('📸 Luxury', f'{luxury_weight:.0f}')
 
     with col_right:
-        fig_pie = px.pie(
-            category_weights,
-            values='total_weight',
-            names='category',
-            title='Weight by Category',
-            hover_data=['total_weight'],
-            hole=0.4
-        )
-        fig_pie.update_traces(
+        category_weights['percentage'] = category_weights['total_weight'] / category_weights['total_weight'].sum()
+
+        # Normalize percentages to 0-1 range (min category = 0/blue, max category = 1/red)
+        pct_values = category_weights['percentage'].values
+        normalized = (pct_values - pct_values.min()) / (pct_values.max() - pct_values.min())
+
+        rgba_colors = plt.cm.RdBu_r(normalized)
+        colors = [f'rgb({int(r*255)},{int(g*255)},{int(b*255)})' for r, g, b, _ in rgba_colors]
+
+        fig_pie = go.Figure(data=[go.Pie(
+            labels=category_weights['category'],
+            values=category_weights['total_weight'],
+            hole=0.4,
+            marker=dict(colors=colors),
             textposition='inside',
             textinfo='percent+label',
-            hovertemplate='%{label}<br>Weight: %{value:.2f}<br>Percent: %{percent}'
-        )
+            hovertemplate='%{label}<br>Weight: %{value:.2f}<br>Percent: %{percent}<extra></extra>'
+        )])
+        fig_pie.update_layout(title='Weight by Category')
         st.plotly_chart(fig_pie, use_container_width=True)
 
 
@@ -119,9 +139,13 @@ def display_category_editor(category, df, selected_config):
     Display editor for a single category with delete button
     """
 
+    # Calculate category total weight
+    category_df = df[df['category'] == category]
+    total_weight = (category_df['qty'] * category_df['weight']).sum()
+
     col1, col2 = st.columns([12, 1])
     with col1:
-        st.subheader(category.title())
+        st.subheader(f"{category.title()} ({total_weight:.0f} g)")
     with col2:
         st.markdown(f"""
             <style>
@@ -181,6 +205,7 @@ def main():
 
     if selected_config:
         df = pd.read_csv(selected_config)
+        df = sort_by_weight(df)
         categories = df['category'].dropna().unique()
 
         # First pass: collect data for summary
@@ -214,6 +239,7 @@ def main():
         if edited_dfs:
             combined_df = pd.concat(edited_dfs, ignore_index=True)
             if st.session_state.get('save_top'):
+                combined_df = sort_by_weight(combined_df)
                 combined_df_save = combined_df[['name', 'desc', 'category', 'weight', 'qty', 'wearable', 'consumable', 'luxury']]
                 combined_df_save.to_csv(selected_config, index=False)
                 st.session_state.last_saved = datetime.now()
