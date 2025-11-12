@@ -14,7 +14,7 @@ def handle_config_selection():
     """
     Handle config/CSV selection and creation.
     """
-
+    
     csv_files = sorted(glob.glob('*.csv'))
 
     def on_create_new_config():
@@ -217,6 +217,7 @@ def main():
                 combined_df_save = combined_df[['name', 'desc', 'category', 'weight', 'qty', 'wearable', 'consumable', 'luxury']]
                 combined_df_save.to_csv(selected_config, index=False)
                 st.session_state.last_saved = datetime.now()
+                st.rerun()
 
             if 'last_saved' in st.session_state:
                 st.success(f'Saved ({st.session_state.last_saved})')
