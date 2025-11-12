@@ -72,7 +72,7 @@ def main():
             category_weights = category_weights.sort_values('total_weight', ascending=False)
 
             # Display summary
-            st.subheader('Summary')
+            #st.subheader('Summary')
 
             # Calculate weights
             total_weight = combined_df['total_weight'].sum()
@@ -81,32 +81,28 @@ def main():
             luxury_weight = combined_df[combined_df['luxury'] == True]['total_weight'].sum()
             base_weight = total_weight - wearable_weight - consumable_weight
 
-            # Metrics row
-            col1, col2, col3, col4, col5 = st.columns(5)
-            with col1:
+            # Two column layout
+            col_left, col_right = st.columns([1, 2])
+
+            with col_left:
                 st.metric('Total Weight', f"{total_weight:.0f}")
-            with col2:
                 st.metric('Base Weight', f"{base_weight:.0f}")
-            with col3:
                 st.metric('👕 Wearable', f"{wearable_weight:.0f}")
-            with col4:
                 st.metric('🍞 Consumable', f"{consumable_weight:.0f}")
-            with col5:
                 st.metric('📸 Luxury', f"{luxury_weight:.0f}")
 
-            fig = px.pie(
-                category_weights,
-                values='total_weight',
-                names='category',
-                title='Weight by Category',
-                hover_data=['total_weight']
-            )
-            fig.update_traces(
-                textposition='inside',
-                textinfo='percent+label',
-                hovertemplate='%{label}<br>Weight: %{value:.2f}<br>Percent: %{percent}'
-            )
-            st.plotly_chart(fig, use_container_width=True)
+            with col_right:
+                # Bar chart by category (sorted heaviest to lightest)
+                fig_category = px.bar(
+                    category_weights,
+                    x='category',
+                    y='total_weight',
+                    title='Weight by Category',
+                    text='total_weight'
+                )
+                fig_category.update_traces(texttemplate='%{text:.0f}', textposition='outside')
+                fig_category.update_xaxes(categoryorder='total descending')
+                st.plotly_chart(fig_category, use_container_width=True)
 
         # Save and Add Category buttons
         def on_add_category():
