@@ -74,18 +74,24 @@ def main():
             # Display summary
             st.subheader('Summary')
 
+            # Calculate weights
+            total_weight = combined_df['total_weight'].sum()
+            wearable_weight = combined_df[combined_df['wearable'] == True]['total_weight'].sum()
+            consumable_weight = combined_df[combined_df['consumable'] == True]['total_weight'].sum()
+            luxury_weight = combined_df[combined_df['luxury'] == True]['total_weight'].sum()
+            base_weight = total_weight - wearable_weight - consumable_weight
+
             # Metrics row
-            col1, col2, col3, col4 = st.columns(4)
+            col1, col2, col3, col4, col5 = st.columns(5)
             with col1:
-                st.metric('Total Weight', f"{combined_df['total_weight'].sum():.0f}")
+                st.metric('Total Weight', f"{total_weight:.0f}")
             with col2:
-                wearable_weight = combined_df[combined_df['wearable'] == True]['total_weight'].sum()
-                st.metric('👕 Wearable', f"{wearable_weight:.0f}")
+                st.metric('Base Weight', f"{base_weight:.0f}")
             with col3:
-                consumable_weight = combined_df[combined_df['consumable'] == True]['total_weight'].sum()
-                st.metric('🍞 Consumable', f"{consumable_weight:.0f}")
+                st.metric('👕 Wearable', f"{wearable_weight:.0f}")
             with col4:
-                luxury_weight = combined_df[combined_df['luxury'] == True]['total_weight'].sum()
+                st.metric('🍞 Consumable', f"{consumable_weight:.0f}")
+            with col5:
                 st.metric('📸 Luxury', f"{luxury_weight:.0f}")
 
             fig = px.pie(
