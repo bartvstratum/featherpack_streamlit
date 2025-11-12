@@ -51,20 +51,23 @@ def main():
 
       for category in categories:
           st.subheader(category.title())
+
           category_df = df[df['category'] == category].drop(columns=['category']).reset_index(drop=True)
           category_df = category_df.rename(columns={'wearable': '👕', 'consumable': '🍞', 'luxury': '📸', 'qty': '#', 'weight': '⚖️'})
           category_df = category_df[['name', 'desc', '#', '👕', '🍞', '📸', '⚖️']]
+
           st.data_editor(
               category_df,
               key=f"editor_{category}",
               hide_index=True,
+              num_rows='dynamic',
               column_config={
                   'desc': st.column_config.TextColumn(width=200),
-                  '⚖️': st.column_config.NumberColumn(width=20, help="Weight"),
-                  '#': st.column_config.NumberColumn(width=10),
-                  '👕': st.column_config.CheckboxColumn(width=20),
-                  '🍞': st.column_config.CheckboxColumn(width=20),
-                  '📸': st.column_config.CheckboxColumn(width=20),
+                  '⚖️': st.column_config.NumberColumn(width=20, default=0, help="Weight"),
+                  '#': st.column_config.NumberColumn(width=10, default=1),
+                  '👕': st.column_config.CheckboxColumn(width=20, default=False),
+                  '🍞': st.column_config.CheckboxColumn(width=20, default=False),
+                  '📸': st.column_config.CheckboxColumn(width=20, default=False),
               }
           )
 
