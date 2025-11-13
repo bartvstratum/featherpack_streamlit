@@ -8,14 +8,15 @@ import matplotlib.pyplot as plt
 
 
 # Some global settings.
+# Don't change these icons; it will break existing CSV files.
 consumable_icon = '🍞'
-wearable_icon = '👕'
+wearable_icon = '🥾'
 luxury_icon = '🎩'
 weight_icon = '⚖️'
 
 
 def create_empty_df():
-    columns = ['name', 'desc', 'category', 'weight', 'qty', 'wearable', 'consumable', 'luxury']
+    columns = ['name', 'desc', 'category', weight_icon, '#', wearable_icon, consumable_icon, luxury_icon]
     return pd.DataFrame(columns=columns)
 
 
@@ -23,7 +24,7 @@ def sort_by_weight(df):
     """
     Sort dataframe: categories by total weight (descending), items within each category by item weight (descending)
     """
-    df['item_weight'] = df['qty'] * df['weight']
+    df['item_weight'] = df['#'] * df[weight_icon]
     category_totals = df.groupby('category')['item_weight'].sum().sort_values(ascending=False)
     df['category'] = pd.Categorical(df['category'], categories=category_totals.index, ordered=True)
     df = df.sort_values(['category', 'item_weight'], ascending=[True, False])
@@ -64,6 +65,7 @@ def handle_config_selection():
         index = None
 
     selected_config = st.selectbox('Available configs:', csv_files, index=index)
+
     return selected_config
 
 
@@ -73,9 +75,9 @@ def display_summary(combined_df, category_weights):
     """
 
     total_weight = combined_df['total_weight'].sum()
-    wearable_weight = combined_df[combined_df['wearable'] == True]['total_weight'].sum()
-    consumable_weight = combined_df[combined_df['consumable'] == True]['total_weight'].sum()
-    luxury_weight = combined_df[combined_df['luxury'] == True]['total_weight'].sum()
+    wearable_weight = combined_df[combined_df[wearable_icon] == True]['total_weight'].sum()
+    consumable_weight = combined_df[combined_df[consumable_icon] == True]['total_weight'].sum()
+    luxury_weight = combined_df[combined_df[luxury_icon] == True]['total_weight'].sum()
     base_weight = total_weight - wearable_weight - consumable_weight
 
     col_left, col_right = st.columns([1, 3])
@@ -93,7 +95,6 @@ def display_summary(combined_df, category_weights):
         # Normalize percentages to 0-1 range (min category = 0/blue, max category = 1/red)
         pct_values = category_weights['percentage'].values
         normalized = (pct_values - pct_values.min()) / (pct_values.max() - pct_values.min())
-
         rgba_colors = plt.cm.RdBu_r(normalized)
         colors = [f'rgb({int(r*255)},{int(g*255)},{int(b*255)})' for r, g, b, _ in rgba_colors]
 
@@ -122,11 +123,11 @@ def display_add_category_buttons(df, selected_config):
                 'name': [''],
                 'desc': [''],
                 'category': [new_cat],
-                'weight': [0],
-                'qty': [1],
-                'wearable': [False],
-                'consumable': [False],
-                'luxury': [False]
+                weight_icon: [0],
+                '#': [1],
+                wearable_icon: [False],
+                consumable_icon: [False],
+                luxury_icon: [False]
             })
             df_updated = pd.concat([df, new_row], ignore_index=True)
             df_updated.to_csv(selected_config, index=False)
@@ -148,7 +149,7 @@ def display_category_editor(category, df, selected_config):
 
     # Calculate category total weight
     category_df = df[df['category'] == category]
-    total_weight = (category_df['qty'] * category_df['weight']).sum()
+    total_weight = (category_df['#'] * category_df[weight_icon]).sum()
 
     col1, col2 = st.columns([12, 1])
     with col1:
@@ -181,7 +182,6 @@ def display_category_editor(category, df, selected_config):
                 st.rerun()
 
     category_df = df[df['category'] == category].drop(columns=['category']).reset_index(drop=True)
-    category_df = category_df.rename(columns={'wearable': wearable_icon, 'consumable': consumable_icon, 'luxury': luxury_icon, 'qty': '#', 'weight': weight_icon})
     category_df = category_df[['name', 'desc', '#', wearable_icon, consumable_icon, luxury_icon, weight_icon]]
 
     edited_df = st.data_editor(
@@ -199,8 +199,7 @@ def display_category_editor(category, df, selected_config):
         }
     )
 
-    # Rename columns back and add category
-    edited_df = edited_df.rename(columns={wearable_icon: 'wearable', consumable_icon: 'consumable', luxury_icon: 'luxury', '#': 'qty', weight_icon: 'weight'})
+    # Add category back
     edited_df['category'] = category
     return edited_df
 
@@ -219,23 +218,12 @@ def main():
         df = sort_by_weight(df)
         categories = df['category'].dropna().unique()
 
-        # Collect data for summary
-        edited_dfs = []
-        for category in categories:
-            category_df = df[df['category'] == category].drop(columns=['category']).reset_index(drop=True)
-            category_df = category_df.rename(columns={'wearable': wearable_icon, 'consumable': consumable_icon, 'luxury': luxury_icon, 'qty': '#', 'weight': weight_icon})
-            category_df = category_df[['name', 'desc', '#', wearable_icon, consumable_icon, luxury_icon, weight_icon]]
-            temp_df = category_df.rename(columns={wearable_icon: 'wearable', consumable_icon: 'consumable', luxury_icon: 'luxury', '#': 'qty', weight_icon: 'weight'})
-            temp_df['category'] = category
-            edited_dfs.append(temp_df)
-
         # Display summary
-        if len(edited_dfs) > 0:
-            combined_df = pd.concat(edited_dfs, ignore_index=True)
-            combined_df['total_weight'] = combined_df['qty'] * combined_df['weight']
-            category_weights = combined_df.groupby('category')['total_weight'].sum().reset_index()
-            category_weights = category_weights.sort_values('total_weight', ascending=False)
-            display_summary(combined_df, category_weights)
+        combined_df = df.copy()
+        combined_df['total_weight'] = combined_df['#'] * combined_df[weight_icon]
+        category_weights = combined_df.groupby('category')['total_weight'].sum().reset_index()
+        category_weights = category_weights.sort_values('total_weight', ascending=False)
+        display_summary(combined_df, category_weights)
 
         # Add category and save buttons
         display_add_category_buttons(df, selected_config)
@@ -251,8 +239,7 @@ def main():
             combined_df = pd.concat(edited_dfs, ignore_index=True)
             if st.session_state.get('save_top'):
                 combined_df = sort_by_weight(combined_df)
-                combined_df_save = combined_df[['name', 'desc', 'category', 'weight', 'qty', 'wearable', 'consumable', 'luxury']]
-                combined_df_save.to_csv(selected_config, index=False)
+                combined_df.to_csv(selected_config, index=False)
                 st.session_state.last_saved = datetime.now()
                 st.rerun()
 
