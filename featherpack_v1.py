@@ -7,6 +7,13 @@ import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 
 
+# Some global settings.
+consumable_icon = '🍞'
+wearable_icon = '👕'
+luxury_icon = '🎩'
+weight_icon = '⚖️'
+
+
 def create_empty_df():
     columns = ['name', 'desc', 'category', 'weight', 'qty', 'wearable', 'consumable', 'luxury']
     return pd.DataFrame(columns=columns)
@@ -76,9 +83,9 @@ def display_summary(combined_df, category_weights):
     with col_left:
         st.metric('Total Weight', f'{total_weight:.0f}')
         st.metric('Base Weight', f'{base_weight:.0f}')
-        st.metric('👕 Wearable', f'{wearable_weight:.0f}')
-        st.metric('🍞 Consumable', f'{consumable_weight:.0f}')
-        st.metric('📸 Luxury', f'{luxury_weight:.0f}')
+        st.metric(f'{wearable_icon} Wearable', f'{wearable_weight:.0f}')
+        st.metric(f'{consumable_icon} Consumable', f'{consumable_weight:.0f}')
+        st.metric(f'{luxury_icon} Luxury', f'{luxury_weight:.0f}')
 
     with col_right:
         category_weights['percentage'] = category_weights['total_weight'] / category_weights['total_weight'].sum()
@@ -174,8 +181,8 @@ def display_category_editor(category, df, selected_config):
                 st.rerun()
 
     category_df = df[df['category'] == category].drop(columns=['category']).reset_index(drop=True)
-    category_df = category_df.rename(columns={'wearable': '👕', 'consumable': '🍞', 'luxury': '📸', 'qty': '#', 'weight': '⚖️'})
-    category_df = category_df[['name', 'desc', '#', '👕', '🍞', '📸', '⚖️']]
+    category_df = category_df.rename(columns={'wearable': wearable_icon, 'consumable': consumable_icon, 'luxury': luxury_icon, 'qty': '#', 'weight': weight_icon})
+    category_df = category_df[['name', 'desc', '#', wearable_icon, consumable_icon, luxury_icon, weight_icon]]
 
     edited_df = st.data_editor(
         category_df,
@@ -184,42 +191,46 @@ def display_category_editor(category, df, selected_config):
         num_rows='dynamic',
         column_config={
             'desc': st.column_config.TextColumn(width=200),
-            '⚖️': st.column_config.NumberColumn(width=20, default=0, help="Weight"),
+            weight_icon: st.column_config.NumberColumn(width=20, default=0, help="Weight"),
             '#': st.column_config.NumberColumn(width=10, default=1),
-            '👕': st.column_config.CheckboxColumn(width=20, default=False),
-            '🍞': st.column_config.CheckboxColumn(width=20, default=False),
-            '📸': st.column_config.CheckboxColumn(width=20, default=False),
+            wearable_icon: st.column_config.CheckboxColumn(width=20, default=False),
+            consumable_icon: st.column_config.CheckboxColumn(width=20, default=False),
+            luxury_icon: st.column_config.CheckboxColumn(width=20, default=False),
         }
     )
 
     # Rename columns back and add category
-    edited_df = edited_df.rename(columns={'👕': 'wearable', '🍞': 'consumable', '📸': 'luxury', '#': 'qty', '⚖️': 'weight'})
+    edited_df = edited_df.rename(columns={wearable_icon: 'wearable', consumable_icon: 'consumable', luxury_icon: 'luxury', '#': 'qty', weight_icon: 'weight'})
     edited_df['category'] = category
     return edited_df
 
 
 def main():
-    st.title('FeatherPack 🪶')
 
+    st.title('FeatherPack 🪶')
+    st.set_page_config(page_title='FeatherPack 🪶')
+
+    # Get available configs (.csv) and select one.
     selected_config = handle_config_selection()
 
     if selected_config:
+        # Read CSV with Pandas.
         df = pd.read_csv(selected_config)
         df = sort_by_weight(df)
         categories = df['category'].dropna().unique()
 
-        # First pass: collect data for summary
+        # Collect data for summary
         edited_dfs = []
         for category in categories:
             category_df = df[df['category'] == category].drop(columns=['category']).reset_index(drop=True)
-            category_df = category_df.rename(columns={'wearable': '👕', 'consumable': '🍞', 'luxury': '📸', 'qty': '#', 'weight': '⚖️'})
-            category_df = category_df[['name', 'desc', '#', '👕', '🍞', '📸', '⚖️']]
-            temp_df = category_df.rename(columns={'👕': 'wearable', '🍞': 'consumable', '📸': 'luxury', '#': 'qty', '⚖️': 'weight'})
+            category_df = category_df.rename(columns={'wearable': wearable_icon, 'consumable': consumable_icon, 'luxury': luxury_icon, 'qty': '#', 'weight': weight_icon})
+            category_df = category_df[['name', 'desc', '#', wearable_icon, consumable_icon, luxury_icon, weight_icon]]
+            temp_df = category_df.rename(columns={wearable_icon: 'wearable', consumable_icon: 'consumable', luxury_icon: 'luxury', '#': 'qty', weight_icon: 'weight'})
             temp_df['category'] = category
             edited_dfs.append(temp_df)
 
         # Display summary
-        if edited_dfs:
+        if len(edited_dfs) > 0:
             combined_df = pd.concat(edited_dfs, ignore_index=True)
             combined_df['total_weight'] = combined_df['qty'] * combined_df['weight']
             category_weights = combined_df.groupby('category')['total_weight'].sum().reset_index()
