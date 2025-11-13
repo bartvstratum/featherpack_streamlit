@@ -7,6 +7,8 @@ import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 import hashlib
 import os
+import zipfile
+import io
 
 
 # Some global settings.
@@ -66,7 +68,24 @@ def handle_config_selection():
     else:
         index = None
 
-    selected_config = st.selectbox('Available configs:', csv_files, index=index)
+    col1, col2 = st.columns([5, 1])
+    with col1:
+        selected_config = st.selectbox('Available configs:', csv_files, index=index)
+    with col2:
+        st.markdown('<div style="margin-top: 27px;"></div>', unsafe_allow_html=True)
+        if selected_config:
+            # Create zip file in memory
+            zip_buffer = io.BytesIO()
+            with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+                # Add CSV
+                zip_file.write(selected_config)
+                # Add notes if exists
+                notes_file = selected_config.replace('.csv', '_notes.txt')
+                if os.path.exists(notes_file):
+                    zip_file.write(notes_file)
+
+            zip_buffer.seek(0)
+            st.download_button('Download', data=zip_buffer, file_name=selected_config.replace('.csv', '.zip'), mime='application/zip')
 
     return selected_config
 
