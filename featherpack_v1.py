@@ -69,38 +69,39 @@ def handle_config_selection():
     return selected_config
 
 
-def display_summary(combined_df, category_weights):
+def display_summary(df, weights):
     """
-    Display weight summary metrics and charts
+    Display weight summary metrics and donut chart.
     """
 
-    total_weight = combined_df['total_weight'].sum()
-    wearable_weight = combined_df[combined_df[wearable_icon] == True]['total_weight'].sum()
-    consumable_weight = combined_df[combined_df[consumable_icon] == True]['total_weight'].sum()
-    luxury_weight = combined_df[combined_df[luxury_icon] == True]['total_weight'].sum()
+    total_weight = df['total_weight'].sum()
+    wearable_weight = df[df[wearable_icon] == True]['total_weight'].sum()
+    consumable_weight = df[df[consumable_icon] == True]['total_weight'].sum()
+    luxury_weight = df[df[luxury_icon] == True]['total_weight'].sum()
     base_weight = total_weight - wearable_weight - consumable_weight
 
     col_left, col_right = st.columns([1, 3])
 
     with col_left:
-        st.metric('Total Weight', f'{total_weight:.0f}')
-        st.metric('Base Weight', f'{base_weight:.0f}')
-        st.metric(f'{wearable_icon} Wearable', f'{wearable_weight:.0f}')
-        st.metric(f'{consumable_icon} Consumable', f'{consumable_weight:.0f}')
-        st.metric(f'{luxury_icon} Luxury', f'{luxury_weight:.0f}')
+        st.metric('Total Weight', f'{total_weight:.0f} g')
+        st.metric('Base Weight', f'{base_weight:.0f} g')
+        st.metric(f'{wearable_icon} Wearable', f'{wearable_weight:.0f} g')
+        st.metric(f'{consumable_icon} Consumable', f'{consumable_weight:.0f} g')
+        st.metric(f'{luxury_icon} Luxury', f'{luxury_weight:.0f} g')
 
     with col_right:
-        category_weights['percentage'] = category_weights['total_weight'] / category_weights['total_weight'].sum()
+        weights['percentage'] = weights['total_weight'] / weights['total_weight'].sum()
 
         # Normalize percentages to 0-1 range (min category = 0/blue, max category = 1/red)
-        pct_values = category_weights['percentage'].values
+        pct_values = weights['percentage'].values
         normalized = (pct_values - pct_values.min()) / (pct_values.max() - pct_values.min())
         rgba_colors = plt.cm.RdBu_r(normalized)
         colors = [f'rgb({int(r*255)},{int(g*255)},{int(b*255)})' for r, g, b, _ in rgba_colors]
 
-        fig_pie = go.Figure(data=[go.Pie(
-            labels=category_weights['category'],
-            values=category_weights['total_weight'],
+        fig_pie = go.Figure(
+            data=[go.Pie(
+            labels=weights['category'],
+            values=weights['total_weight'],
             hole=0.4,
             marker=dict(colors=colors),
             textposition='inside',
