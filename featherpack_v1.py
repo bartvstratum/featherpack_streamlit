@@ -5,6 +5,8 @@ from datetime import datetime
 import plotly.express as px
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
+import hashlib
+import os
 
 
 # Some global settings.
@@ -154,22 +156,22 @@ def display_category_editor(category, df, selected_config):
 
     col1, col2 = st.columns([12, 1])
     with col1:
-        st.subheader(f"{category.title()} ({total_weight:.0f} g)")
+        st.subheader(f'{category.title()} ({total_weight:.0f} g)')
     with col2:
-        st.markdown(f"""
+        st.markdown(f'''
             <style>
             button[data-testid="baseButton-secondary"]{{
                 font-size: 10px;
                 padding: 2px 8px;
             }}
             </style>
-        """, unsafe_allow_html=True)
+        ''', unsafe_allow_html=True)
         if st.button('🗑️', key=f'delete_{category}', help='Delete category'):
             st.session_state[f'confirm_delete_{category}'] = True
 
     # Confirmation dialog
     if st.session_state.get(f'confirm_delete_{category}'):
-        st.warning(f'Delete category "{category}"? This will remove all items in this category.')
+        st.warning(f'Delete category \'{category}\'? This will remove all items in this category.')
         col1, col2, _ = st.columns([1, 1, 4])
         with col1:
             if st.button('Yes', key=f'confirm_yes_{category}'):
@@ -187,12 +189,12 @@ def display_category_editor(category, df, selected_config):
 
     edited_df = st.data_editor(
         category_df,
-        key=f"editor_{category}",
+        key=f'editor_{category}',
         hide_index=True,
         num_rows='dynamic',
         column_config={
             'desc': st.column_config.TextColumn(width=200),
-            weight_icon: st.column_config.NumberColumn(width=20, default=0, help="Weight"),
+            weight_icon: st.column_config.NumberColumn(width=20, default=0, help='Weight'),
             '#': st.column_config.NumberColumn(width=10, default=1),
             wearable_icon: st.column_config.CheckboxColumn(width=20, default=False),
             consumable_icon: st.column_config.CheckboxColumn(width=20, default=False),
@@ -209,6 +211,23 @@ def main():
 
     st.title('FeatherPack 🪶')
     st.set_page_config(page_title='FeatherPack 🪶')
+
+    # Password protection
+    if 'authenticated' not in st.session_state:
+        st.session_state.authenticated = False
+
+    with st.sidebar:
+        if not st.session_state.authenticated:
+            password = st.text_input('Admin password:', type='password')
+            if password:
+                correct_hash = '012567b583b5ecc9f2ce37bc79d97dd3159de12592dcc84434cb8c11be77e0ed'
+                if hashlib.sha256(password.encode()).hexdigest() == correct_hash:
+                    st.session_state.authenticated = True
+                    st.rerun()
+                else:
+                    st.error('Wrong password')
+        else:
+            st.success('Authenticated (editing enabled)')
 
     # Get available configs (.csv) and select one.
     selected_config = handle_config_selection()
@@ -229,23 +248,44 @@ def main():
         # Add category and save buttons
         display_add_category_buttons(df, selected_config)
 
+        # Show save status under the save button
+        if 'last_saved' in st.session_state:
+            st.success(f'Saved ({st.session_state.last_saved})')
+        elif not st.session_state.authenticated:
+            st.info('🔒 Login to save changes')
+
         # Second pass: display category editors
         edited_dfs = []
         for category in categories:
             edited_df = display_category_editor(category, df, selected_config)
             edited_dfs.append(edited_df)
 
+        # Notes section
+        st.subheader('Notes')
+        notes_file = selected_config.replace('.csv', '_notes.txt')
+
+        # Load notes
+        existing_notes = ''
+        if os.path.exists(notes_file):
+            with open(notes_file, 'r') as f:
+                existing_notes = f.read()
+
+        notes = st.text_area('Notes...', value=existing_notes, height=200, key='notes_area', label_visibility='collapsed')
+
+        # Save notes if authenticated and changed
+        if notes != existing_notes and st.session_state.authenticated:
+            with open(notes_file, 'w') as f:
+                f.write(notes)
+
         # Handle saving
         if edited_dfs:
             combined_df = pd.concat(edited_dfs, ignore_index=True)
             if st.session_state.get('save_top'):
-                combined_df = sort_by_weight(combined_df)
-                combined_df.to_csv(selected_config, index=False)
-                st.session_state.last_saved = datetime.now()
-                st.rerun()
-
-            if 'last_saved' in st.session_state:
-                st.success(f'Saved ({st.session_state.last_saved})')
+                if st.session_state.authenticated:
+                    combined_df = sort_by_weight(combined_df)
+                    combined_df.to_csv(selected_config, index=False)
+                    st.session_state.last_saved = datetime.now()
+                    st.rerun()
 
 
 if __name__ == '__main__':

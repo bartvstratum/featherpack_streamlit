@@ -9,7 +9,6 @@ Rain pants,Vaude -> replace!,1.0,False,False,False,172.0,Clothes
 Shirt,Icebreaker Men Merino 125 Cool-Lite? Sphere III SS Tee,1.0,False,False,False,126.0,Clothes
 Camp/swim pants,Nike Stride Dry-Fit,1.0,False,False,False,91.0,Clothes
 Underwear,Icebreaker Anatomica Boxers,1.0,False,False,False,73.0,Clothes
-Neck warmer,Merino Buff,1.0,False,False,False,40.0,Clothes
 Long sleeved shirt?,,1.0,False,False,False,0.0,Clothes
 Tent,Bonfus Duos 2P + 4 extra guy lines + wash line,1.0,False,False,False,681.0,Shelter and sleep
 Down quilt ,Therm-a-Rest Vesper 32 UL,1.0,False,False,False,510.0,Shelter and sleep
@@ -24,6 +23,7 @@ Fanny pack,"DIY, UltraGrid 132 g/m2",1.0,True,False,False,79.0,Wearables
 Underwear,Icebreaker Anatomica Boxers,1.0,True,False,False,73.0,Wearables
 Socks hiking,Smart Wool Cushion Crew,1.0,True,False,False,60.0,Wearables
 Belt,"Random, came with shorts",1.0,True,False,False,50.0,Wearables
+"Neck ""warmer""",Buff Merino,1.0,True,False,False,40.0,Wearables
 Sunglasses,Oakley Radar EV Path,1.0,True,False,False,30.0,Wearables
 Camera,Canon G7X mark III,1.0,False,False,True,315.0,Electronics
 Power bank,Xtorm (?) 10'000 mAh,1.0,False,False,False,216.0,Electronics
@@ -50,14 +50,14 @@ Mini towel,PackTowl face (25x35 cm),1.0,False,False,False,20.0,Misc
 Map + compass,Paper map + compass,1.0,False,False,False,0.0,Misc
 Water bottles,"Random, 1 L",3.0,False,False,False,0.0,Misc
 Repair kit,"Thread/needles, patch kit sleeping pad, duck tape, ...",1.0,False,False,False,0.0,Misc
-Condiments,"Olive oil, salt, Tabasco, stock cubes, ...",1.0,False,True,False,260.0,Consumables
+Condiments,"Olive oil, salt, Tabasco, stock cubes, ...",1.0,False,True,False,250.0,Consumables
 Fuel canister,"Random, 100 g",1.0,False,True,False,205.0,Consumables
 Random food,"Small food stuff; coffee, jam, sugar, ..",1.0,False,True,False,100.0,Consumables
-Food 2-3 days,Om nom nom..,0.0,False,True,False,2000.0,Consumables
-Water,That liquid stuff,0.0,False,True,False,2000.0,Consumables
+Food 2-3 days,Nom nom nom,0.0,False,True,False,2000.0,Consumables
+Water,Glug glug glug,0.0,False,True,False,2000.0,Consumables
 Cooking pot,Toaks titanium 900 ml + protective cover,1.0,False,False,False,128.0,Cooking
 Burner,SOTO WindMaster,1.0,False,False,False,90.0,Cooking
 Cutting board,GSI,1.0,False,False,False,70.0,Cooking
 Mug,Toaks titanium 375 ml,1.0,False,False,False,51.0,Cooking
-Small stuff,"Canister stand, lighter, dish towel, ...",1.0,False,False,False,50.0,Cooking
-Cutlery,Sea to Summit? + Toaks titanium long spoon,1.0,False,False,False,44.0,Cooking
+Cutlery,STS Passage + Titanium long spoon,1.0,False,False,False,44.0,Cooking
+Small stuff,"Canister stand, lighter, ...",1.0,False,False,False,40.0,Cooking
